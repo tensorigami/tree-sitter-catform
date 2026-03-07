@@ -1,0 +1,11 @@
+id = "catform"
+name = "Catform"
+description = "Syntax highlighting for Catform (.cat) — categorical tensor specification language"
+version = "0.1.0"
+schema_version = 1
+authors = ["tensorigami"]
+repository = "https://github.com/tensorigami/tree-sitter-catform"
+
+[grammars.catform]
+repository = "https://github.com/tensorigami/tree-sitter-catform"
+rev = "eca7e52a500c13464cf4a01ca956de3fccc66e88"
