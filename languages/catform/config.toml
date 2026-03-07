@@ -2,7 +2,6 @@ name = "Catform"
 grammar = "catform"
 path_suffixes = ["cat"]
 line_comments = ["// "]
-block_comment = ["/*", "*/"]
 brackets = [
   { start = "(", end = ")", close = true, newline = false },
   { start = "[", end = "]", close = true, newline = false },
