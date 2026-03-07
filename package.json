@@ -1,0 +1,13 @@
+{
+  "name": "tree-sitter-catform",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for Catform (.cat)",
+  "main": "grammar.js",
+  "scripts": {
+    "generate": "tree-sitter generate --abi 14",
+    "test": "tree-sitter test"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "^0.25.0"
+  }
+}
