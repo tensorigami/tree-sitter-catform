@@ -1,10 +1,6 @@
 ; ── Comments ──────────────────────────────────────────────────
 (comment) @comment
 
-; ── Keywords ─────────────────────────────────────────────────
-"param" @keyword
-"constant" @keyword
-
 ; ── Op types ─────────────────────────────────────────────────
 (builtin_op) @function.builtin
 
@@ -14,10 +10,7 @@
 ; ── Function definitions ─────────────────────────────────────
 (function_def name: (identifier) @function)
 
-; ── Function calls in constant expressions ───────────────────
-(call_expr function: (identifier) @function)
-
-; ── Op calls ─────────────────────────────────────────────────
+; ── Op calls (user-defined function in op position) ──────────
 (op_call op_type: (op_type (identifier) @function))
 
 ; ── Keyword specifiers (over=, count=) ───────────────────────
@@ -32,12 +25,22 @@
 ; ── Numbers ──────────────────────────────────────────────────
 (number) @number
 
+; ── Config references (param.name) ───────────────────────────
+((dotted_name) @constant
+  (#match? @constant "^param\\."))
+
+; ── Weight references (model.x, layer.x, lm_head.x) ─────────
+((dotted_name) @variable.member
+  (#match? @variable.member "^(model|layer|lm_head)\\."))
+
+; ── Language literals (mathematical constants) ────────────────
+((identifier) @constant.builtin
+  (#match? @constant.builtin "^(rot_I|rot_J|neg_inf|zero|one)$"))
+
 ; ── Identifiers ──────────────────────────────────────────────
-(param_decl name: (identifier) @variable.parameter)
-(constant_decl name: (identifier) @constant)
 (param_entry name: (identifier) @variable.parameter)
 (assignment output: (identifier) @variable)
-(dotted_name) @variable.member
+(tuple_assignment output: (tuple_pattern (identifier) @variable))
 
 ; ── Punctuation ──────────────────────────────────────────────
 "(" @punctuation.bracket
@@ -52,7 +55,3 @@
 "." @punctuation.delimiter
 "=" @operator
 "->" @operator
-"+" @operator
-"-" @operator
-"*" @operator
-"/" @operator

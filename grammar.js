@@ -6,18 +6,7 @@ module.exports = grammar({
   extras: ($) => [/\s/, $.comment],
 
   rules: {
-    source_file: ($) => repeat($._definition),
-
-    _definition: ($) =>
-      choice($.param_decl, $.constant_decl, $.function_def),
-
-    // ── Declarations ──────────────────────────────────────────
-
-    param_decl: ($) =>
-      seq("param", field("name", $.identifier), optional(seq("=", field("value", $.expression)))),
-
-    constant_decl: ($) =>
-      seq("constant", field("name", $.identifier), "=", field("value", $.expression)),
+    source_file: ($) => repeat($.function_def),
 
     // ── Function definition ───────────────────────────────────
 
@@ -25,7 +14,7 @@ module.exports = grammar({
       seq(
         field("name", $.identifier),
         "(", optional($.param_list), ")",
-        optional(seq("->", field("return_type", $.type))),
+        optional(seq("->", field("return_type", $.return_type))),
         "{", repeat($._statement), "}"
       ),
 
@@ -34,10 +23,14 @@ module.exports = grammar({
     param_entry: ($) =>
       seq(field("name", $.identifier), ":", field("type", $.type)),
 
+    // Named tuple return: -> (name: type, name: type)
+    return_type: ($) => seq("(", $.param_list, ")"),
+
     // ── Statements ────────────────────────────────────────────
 
-    _statement: ($) => choice($.assignment, $.return_expr),
+    _statement: ($) => choice($.assignment, $.tuple_assignment),
 
+    // name : type = op(...)
     assignment: ($) =>
       seq(
         field("output", $.identifier),
@@ -47,7 +40,21 @@ module.exports = grammar({
         field("op", $.op_call)
       ),
 
-    return_expr: ($) => $.identifier,
+    // (a, b) : (type, type) = op(...)
+    tuple_assignment: ($) =>
+      seq(
+        field("output", $.tuple_pattern),
+        ":",
+        field("type", $.tuple_type),
+        "=",
+        field("op", $.op_call)
+      ),
+
+    tuple_pattern: ($) =>
+      seq("(", $.identifier, repeat(seq(",", $.identifier)), ")"),
+
+    tuple_type: ($) =>
+      seq("(", $.type, repeat(seq(",", $.type)), ")"),
 
     // ── Op call ───────────────────────────────────────────────
 
@@ -77,6 +84,7 @@ module.exports = grammar({
         $.keyword_specifier,
         $.pattern_string,
         $.builtin_fn,
+        $.dotted_name,
         $.identifier,
         $.number
       ),
@@ -96,7 +104,9 @@ module.exports = grammar({
 
     // ── Arguments ─────────────────────────────────────────────
 
-    arg_list: ($) => seq($.expression, repeat(seq(",", $.expression))),
+    arg_list: ($) => seq($._arg, repeat(seq(",", $._arg))),
+
+    _arg: ($) => choice($.dotted_name, $.identifier, $.number),
 
     // ── Types ─────────────────────────────────────────────────
 
@@ -113,38 +123,12 @@ module.exports = grammar({
     shape_dim: ($) =>
       choice(
         $.number,
+        $.dotted_name,
         $.identifier,
         seq("(", $.shape_dim, repeat(seq(" ", $.shape_dim)), ")")
       ),
 
-    // ── Expressions ───────────────────────────────────────────
-
-    expression: ($) =>
-      choice(
-        $.number,
-        $.call_expr,
-        $.dotted_name,
-        $.identifier,
-        $.pattern_string,
-        $.array_literal,
-        $.unary_expr,
-        $.binary_expr,
-        seq("(", $.expression, ")")
-      ),
-
-    call_expr: ($) =>
-      seq(field("function", $.identifier), "(", optional($.arg_list), ")"),
-
-    unary_expr: ($) => prec(3, seq("-", $.expression)),
-
-    binary_expr: ($) =>
-      choice(
-        prec.left(1, seq($.expression, choice("+", "-"), $.expression)),
-        prec.left(2, seq($.expression, choice("*", "/"), $.expression))
-      ),
-
-    array_literal: ($) =>
-      seq("[", $.expression, repeat(seq(",", $.expression)), "]"),
+    // ── Names ─────────────────────────────────────────────────
 
     dotted_name: ($) =>
       seq($.identifier, repeat1(seq(".", $.identifier))),
