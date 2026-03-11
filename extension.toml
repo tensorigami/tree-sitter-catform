@@ -8,4 +8,4 @@ repository = "https://github.com/tensorigami/tree-sitter-catform"
 
 [grammars.catform]
 repository = "https://github.com/tensorigami/tree-sitter-catform"
-rev = "f0c2607c50d5494cb57cfe473b986b007cf1a457"
+rev = "efc41ef544312b958b2ba2fb4e1766ee998a88d1"
