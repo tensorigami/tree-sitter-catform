@@ -1,57 +1,57 @@
-; Catform syntax highlighting — see SYNTAX.md for role definitions.
+; Catform syntax highlighting — see SYNTAX.md for the 7 color groups.
 ; Ordered general → specific so deeper captures override.
 
-; ── Comments ─────────────────────────────────────────────────
+; ── Comments (secondary) ──────────────────────────────────────
 (comment) @comment
 
-; ── Op names + function names → same color ───────────────────
+; ── §2: Op names + function names → same color ───────────────
 (builtin_op) @keyword
 (op_call op_type: (op_type (identifier) @keyword))
 (function_def name: (identifier) @keyword)
 
-; ── Specifier functions — distinct from op names ─────────────
+; ── §7: Specifier functions — distinct from op names ─────────
 (builtin_fn) @function.builtin
 (specifier_list (identifier) @function.builtin)
 
-; ── Specifier keywords (over=, count=) ───────────────────────
+; ── Specifier keywords (secondary: over=, count=) ────────────
 (keyword_specifier key: (identifier) @property)
 
-; ── dtype — bold type color ──────────────────────────────────
+; ── §3: dtype ─────────────────────────────────────────────────
 (dtype) @type.builtin
 
-; ── Shape dimensions — lighter type color ────────────────────
+; ── §4: Shape dimensions — distinct from dtype ────────────────
 (shape_dim (identifier) @type)
 
-; ── Pattern strings ──────────────────────────────────────────
+; ── §6: Pattern strings ──────────────────────────────────────
 (pattern_string) @string
 
-; ── Numbers ──────────────────────────────────────────────────
+; ── Numbers (secondary) ──────────────────────────────────────
 (number) @number
 
-; ── param.X — prefix colored distinctly ──────────────────────
+; ── §5: param.X — prefix colored distinctly ──────────────────
 (dotted_name
   (identifier) @attribute
   (#eq? @attribute "param")
   (identifier) @constant)
 
-; ── Weight references (model.X, layer.X, lm_head.X) ─────────
+; ── Weight references (secondary: model.X, layer.X) ──────────
 ((dotted_name) @variable.member
   (#match? @variable.member "^(model|layer|lm_head)\\."))
 
-; ── Language literals (mathematical constants) ────────────────
+; ── Language literals (secondary: mathematical constants) ─────
 ((identifier) @constant.builtin
   (#match? @constant.builtin "^(rot_I|rot_J|neg_inf|zero|one)$"))
 
-; ── Variables — all the same plain color ─────────────────────
+; ── §1: Variables — all the same plain color ─────────────────
 (param_entry name: (identifier) @variable)
 (assignment output: (identifier) @variable)
 (tuple_assignment output: (tuple_pattern (identifier) @variable))
 (arg_list (identifier) @variable)
 
-; ── Arrow ────────────────────────────────────────────────────
+; ── §2: Arrow ────────────────────────────────────────────────
 "->" @keyword
 
-; ── Punctuation ──────────────────────────────────────────────
+; ── Punctuation (secondary) ──────────────────────────────────
 "(" @punctuation.bracket
 ")" @punctuation.bracket
 "[" @punctuation.bracket
