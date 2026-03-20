@@ -167,12 +167,57 @@
     }
   },
   {
-    "type": "op_call",
+    "type": "literal_call",
     "named": true,
     "fields": {
       "op_type": {
         "multiple": false,
         "required": true,
+        "types": [
+          {
+            "type": "builtin_op",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "literal_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "literal_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "literal_value",
+          "named": true
+        },
+        {
+          "type": "number",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "op_call",
+    "named": true,
+    "fields": {
+      "op_type": {
+        "multiple": false,
+        "required": false,
         "types": [
           {
             "type": "op_type",
@@ -197,6 +242,10 @@
       "types": [
         {
           "type": "arg_list",
+          "named": true
+        },
+        {
+          "type": "literal_call",
           "named": true
         }
       ]

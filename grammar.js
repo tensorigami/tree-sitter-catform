@@ -59,10 +59,25 @@ module.exports = grammar({
     // ── Op call ───────────────────────────────────────────────
 
     op_call: ($) =>
+      choice(
+        $.literal_call,
+        seq(
+          field("op_type", $.op_type),
+          optional(field("specifiers", $.specifier_block)),
+          "(", optional($.arg_list), ")"
+        )
+      ),
+
+    literal_call: ($) =>
       seq(
-        field("op_type", $.op_type),
-        optional(field("specifiers", $.specifier_block)),
-        "(", optional($.arg_list), ")"
+        field("op_type", alias("literal", $.builtin_op)),
+        "(", $.literal_value, ")"
+      ),
+
+    literal_value: ($) =>
+      choice(
+        $.number,
+        seq("[", $.literal_value, repeat(seq(",", $.literal_value)), "]")
       ),
 
     op_type: ($) =>

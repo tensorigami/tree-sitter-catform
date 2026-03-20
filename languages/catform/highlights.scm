@@ -28,19 +28,9 @@
 ; ── Numbers (secondary) ──────────────────────────────────────
 (number) @number
 
-; ── §5: param.X — prefix colored distinctly ──────────────────
-(dotted_name
-  (identifier) @attribute
-  (#eq? @attribute "param")
-  (identifier) @constant)
-
-; ── Weight references (secondary: model.X, layer.X) ──────────
-((dotted_name) @variable.member
-  (#match? @variable.member "^(model|layer|lm_head)\\."))
-
-; ── Language literals (secondary: mathematical constants) ─────
-((identifier) @constant.builtin
-  (#match? @constant.builtin "^(rot_I|rot_J|neg_inf|zero|one)$"))
+; ── §5: Dotted names — prefix @attribute, path segments @constant ──
+(dotted_name . (identifier) @attribute)
+(dotted_name "." (identifier) @constant)
 
 ; ── §1: Variables — all the same plain color ─────────────────
 (param_entry name: (identifier) @variable)
